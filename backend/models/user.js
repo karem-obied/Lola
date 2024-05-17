@@ -17,33 +17,11 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please Provide Your Email"],
     },
 
-    accounts: {
-      type: Array,
-    },
-
-    blogs: {
-      type: Array,
-    },
-
-    answers: {
-      type: Array,
-    },
-
-    job: {
+    twitterKey: {
       type: String,
     },
-
-    skills: {
-      type: Array,
-    },
-
-    generatedIdeas: {
-      type: Array,
-    },
-
-    generatedPosts: {
-      type: Array,
-    },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

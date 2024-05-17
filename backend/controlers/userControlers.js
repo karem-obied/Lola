@@ -15,13 +15,6 @@ const register = asyncHandler(async (req, res) => {
     userName,
     password: hashed,
     email,
-    job,
-    skills,
-    blogs: [],
-    answers: [],
-    accounts: [],
-    generatedIdeas: [],
-    generatedPosts: [],
   });
   if (!user) {
     res.status(400);
@@ -31,13 +24,6 @@ const register = asyncHandler(async (req, res) => {
     _id: user._id,
     userName: user.userName,
     email: user.email,
-    job: user.job,
-    skills: user.skills,
-    blogs: user.blogs,
-    answers: user.answers,
-    accounts: user.accounts,
-    generatedIdeas: user.generatedIdeas,
-    generatedPosts: user.generatedPosts,
     token: generate(user._id),
   });
 });
@@ -62,13 +48,6 @@ const login = asyncHandler(async (req, res) => {
       _id: user._id,
       userName: user.userName,
       email: user.email,
-      job: user.job,
-      skills: user.skills,
-      blogs: user.blogs,
-      answers: user.answers,
-      accounts: user.accounts,
-      generatedIdeas: user.generatedIdeas,
-      generatedPosts: user.generatedPosts,
       token: generate(user._id),
     });
   }
@@ -76,8 +55,47 @@ const login = asyncHandler(async (req, res) => {
   throw new Error("Something Went Wrong, Please Try Again Later");
 });
 
-const update = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+  let newPassword;
+  if (updatedUser.password && updatedUser.npassword) {
+    if (!(await bcrypt.compare(password, user.password))) {
+      res.status(400);
+      throw new Error("Password Isn't Correct");
+    }
+    let salt = await bcrypt.genSalt(10);
+    let hashed = await bcrypt.hash(updatedUser.npassword, salt);
+    newPassword = hashed;
+  }
+  const updatedUser = { _id: user._id, ...req.body };
+  await User.findByIdAndUpdate(req.user._id, {
+    _id: user._id,
+    userName: updatedUser.userName ? updatedUser.userName : user.userName,
+    email: updatedUser.email ? updatedUser.email : user.email,
+    password: newPassword ? newPassword : user.password,
+  });
+  res.status(200).json(user);
+});
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+  await User.findByIdAndDelete(req.user._id);
+  res.status(200).json({ id: req.user._id });
+});
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+  res.status(200).json(user);
 });
 
 const generate = (id) => {
@@ -87,4 +105,7 @@ const generate = (id) => {
 module.exports = {
   register,
   login,
+  updateUser,
+  deleteUser,
+  getUser,
 };
