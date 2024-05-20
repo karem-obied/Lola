@@ -12,5 +12,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(errorHandler);
 
 app.use("/api/users", require("./routes/user"));
+app.use("/api/blogs", require("./routes/blog"));
 
 app.listen(PORT, () => console.log(`Server is Running on port ${PORT}`));

@@ -17,10 +17,12 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please Provide Your Email"],
     },
 
-    twitterKey: {
-      type: String,
+    twitter: {
+      type: Object,
     },
+
     createdAt: { type: Date, default: Date.now },
+
     updatedAt: { type: Date, default: Date.now },
   },
   {
